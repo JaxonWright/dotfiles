@@ -75,7 +75,7 @@
       "4000": "",
       "default": ""
     },
-    "tooltip-format": "Blue Light Filter",
+    "tooltip-format": "Nightlight",
     "interval": "once",
     "on-click": "hyprctl hyprsunset temperature | grep -q 4000 && hyprctl hyprsunset temperature 6500 || hyprctl hyprsunset temperature 4000; pkill -SIGRTMIN+8 waybar",
     "signal": 8
