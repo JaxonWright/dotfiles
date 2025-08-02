@@ -13,7 +13,7 @@
   "modules-right": [
     "mpris",
     "tray",
-    "custom/screen",
+    "custom/nightlight",
     "bluetooth",
     "network",
     "pulseaudio",
@@ -67,7 +67,7 @@
     },
     "ignored-players": ["brave"]
   },
-  "custom/screen": {
+  "custom/nightlight": {
     "exec": "hyprctl hyprsunset temperature | jq --unbuffered --compact-output -Rn '{alt: input}'",
     "format": "{icon}",
     "return-type": "json",
