@@ -38,6 +38,10 @@
   margin: 0 7.5px;
 }
 
+#tray {
+  margin-left: 32px;
+}
+
 #custom-expand-icon {
   margin-right: 12px;
 }
