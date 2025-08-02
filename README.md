@@ -20,3 +20,9 @@ sudo apt install stow
 3. Run `stow <name>` to automatically symlink that tool's dotfiles on your system (like `stow waybar`)
 ???
 4. Profit
+
+### Existing Dotfiles?
+If there are existing dotfiles that you want to replace with the ones in this repo:
+
+1. run `chmod +x stow-replace.sh` to make the script executable 
+2. run `./stow-replace.sh <package_name>` to replace existing dotfiles with ones from this repo
