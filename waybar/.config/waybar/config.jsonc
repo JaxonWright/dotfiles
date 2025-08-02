@@ -13,6 +13,7 @@
   "modules-right": [
     "mpris",
     "tray",
+    "custom/screen",
     "bluetooth",
     "network",
     "pulseaudio",
@@ -65,6 +66,19 @@
           "paused": "⏸"
     },
     "ignored-players": ["brave"]
+  },
+  "custom/screen": {
+    "exec": "hyprctl hyprsunset temperature | jq --unbuffered --compact-output -Rn '{alt: input}'",
+    "format": "{icon}",
+    "return-type": "json",
+    "format-icons": {
+      "4000": "",
+      "default": ""
+    },
+    "tooltip-format": "Blue Light Filter",
+    "interval": "once",
+    "on-click": "hyprctl hyprsunset temperature | grep -q 4000 && hyprctl hyprsunset temperature 6500 || hyprctl hyprsunset temperature 4000; pkill -SIGRTMIN+8 waybar",
+    "signal": 8
   },
   "network": {
     "format-icons": ["󰤯","󰤟","󰤢","󰤥","󰤨"],
