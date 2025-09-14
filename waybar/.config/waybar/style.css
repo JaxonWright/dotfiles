@@ -7,7 +7,7 @@
   border: none;
   border-radius: 0;
   min-height: 0;
-  font-family: CaskaydiaMono Nerd Font;
+  font-family: 'CaskaydiaMono Nerd Font Mono';
   font-size: 12px;
 }
 
@@ -40,6 +40,7 @@
 #custom-omarchy,
 #custom-update {
   min-width: 12px;
+  font-size: 16px;
   margin: 0 7.5px;
 }
 
