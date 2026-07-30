@@ -1,6 +1,6 @@
 {
   "bar": {
-    "centerAnchor": "omarchy.clock",
+    "centerAnchor": "local.clock",
     "layout": {
       "center": [
         {
@@ -9,7 +9,7 @@
         {
           "format": "dddd hh:mm A",
           "formatAlt": "d MMMM 'W'ww yyyy",
-          "id": "omarchy.clock",
+          "id": "local.clock",
           "verticalFormat": "hh\n—\nmm A"
         },
         {
@@ -29,7 +29,7 @@
       ],
       "right": [
         {
-          "id": "omarchy.tray"
+          "id": "local.tray"
         },
         {
           "id": "omarchy.model-usage"
