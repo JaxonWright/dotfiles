@@ -12,16 +12,19 @@ yay -S stow
 ## Setup
 
 ```sh
-# Clone into any directory (e.g. ~/dotfiles)
+# Clone into any directory
 git clone https://github.com/jaxon/dotfiles ~/dotfiles
 cd ~/dotfiles
 
-# Stow a package — creates symlinks from repo → system
-# If the repo is NOT at ~/dotfiles, you need --target:
-stow --target=$HOME <package>
+# One-command init: stows everything, applies shell.json, registers plugins, restarts shell
+./init.sh
+```
 
-# If the file already exists on the system, use --adopt to move it into the repo:
-stow --adopt --target=$HOME <package>
+For individual packages, stow manually:
+
+```sh
+stow --target=$HOME <package>           # fresh system
+stow --adopt --target=$HOME <package>   # existing files — adopts them into repo
 ```
 
 ## Packages
