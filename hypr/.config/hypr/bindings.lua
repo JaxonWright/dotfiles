@@ -27,3 +27,11 @@
 -- o.bind("SUPER + SHIFT + S", nil, "omarchy-capture-screenshot")
 -- o.bind("SUPER + H", nil, "voxtype record toggle")
 -- o.bind("SUPER + PERIOD", nil, "omarchy-shell shell toggle omarchy.emojis")
+
+-- Personal application bindings (restored from the pre-Quattro bindings.conf).
+o.bind("SUPER + SHIFT + M", "Music", "omarchy-launch-or-focus spotify")
+o.bind("SUPER + SHIFT + ALT + M", "Music TUI", "omarchy-launch-or-focus-tui cliamp")
+o.bind("SUPER + SHIFT + C", "VS Code", { launch = "code" })
+o.bind("SUPER + SHIFT + D", "Discord", { launch = "discord" })
+o.bind("SUPER + SHIFT + S", "Steam", { launch = "steam" })
+o.bind("SUPER + SHIFT + G", "Signal", { focus = "^signal$", launch = "signal-desktop" })
