@@ -92,6 +92,7 @@ else
   printf '\no.launch_on_start("solaar --window=hide")\n' >> "$AUTOSTART"
   echo "  ✓ Added to Hyprland autostart"
 fi
+install_app "OpenRGB" openrgb omarchy pkg add openrgb
 install_app "GitHub CLI" gh omarchy pkg add gh
 if have bambu-studio; then
   echo "  → Bambu Studio already installed"
