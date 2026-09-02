@@ -3,6 +3,10 @@ set -e
 
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 
+echo "==> Updating system packages..."
+omarchy update -y
+echo "  ✓ System up to date"
+
 have() {
   command -v "$1" >/dev/null 2>&1
 }
