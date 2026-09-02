@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "id": "local.tray",
+  "name": "System tray",
+  "version": "1.0.0",
+  "author": "Local",
+  "description": "Cloned from omarchy.tray",
+  "kinds": [
+    "bar-widget"
+  ],
+  "entryPoints": {
+    "barWidget": "Widget.qml"
+  },
+  "barWidget": {
+    "displayName": "System tray",
+    "description": "Cloned from omarchy.tray",
+    "category": "Status",
+    "allowMultiple": false
+  },
+  "omarchy": {
+    "clonedFrom": "omarchy.tray",
+    "clonedFromPath": "/usr/share/omarchy/shell/plugins/bar/widgets/Tray.qml"
+  }
+}
