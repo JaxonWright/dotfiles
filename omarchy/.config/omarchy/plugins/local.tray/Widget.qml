@@ -70,7 +70,7 @@ BarWidget {
 
   function ownedByDedicatedWidget(item) {
     var layout = root.bar && root.bar.layoutConfig ? root.bar.layoutConfig : null
-    return TrayModel.ownedByDedicatedWidget(item, layout)
+    return TrayModel.ownedByOmarchy(item, layout)
   }
 
   function bucket(category) {
