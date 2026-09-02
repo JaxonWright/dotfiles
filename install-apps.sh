@@ -43,6 +43,7 @@ install_app "VS Code" code omarchy install editor vscode
 echo ""
 echo "==> Installing apps..."
 install_app "Spotify" spotify omarchy install service spotify
+install_app "Spicetify" spicetify omarchy pkg aur add spicetify-cli
 install_app "Discord" discord omarchy pkg add discord
 install_app "Steam" steam omarchy install gaming steam
 install_app "GitHub CLI" gh omarchy pkg add gh
