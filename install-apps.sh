@@ -47,7 +47,29 @@ install_app "Spicetify" spicetify omarchy pkg aur add spicetify-cli
 install_app "Discord" discord omarchy pkg add discord
 install_app "Steam" steam omarchy install gaming steam
 install_app "Arctis Manager" lam-gui omarchy pkg aur add linux-arctis-manager
-install_app "Solaar" solaar omarchy pkg add solaar
+if have solaar; then
+  echo "  → Solaar already installed"
+else
+  omarchy pkg add solaar
+  echo "  ✓ Solaar"
+fi
+
+echo "  → Reloading Solaar udev rules..."
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+if [ ! -f /usr/lib/udev/rules.d/42-logitech-unify-permissions.rules ]; then
+  echo "  → Warning: Solaar udev rule not found on disk"
+fi
+echo "  ✓ Solaar udev rule active"
+
+echo "  → Enabling Solaar at startup..."
+AUTOSTART="$REPO_DIR/hypr/.config/hypr/autostart.lua"
+if grep -qs 'solaar' "$AUTOSTART"; then
+  echo "  → Already in Hyprland autostart"
+else
+  printf '\no.launch_on_start("solaar --window=hide")\n' >> "$AUTOSTART"
+  echo "  ✓ Added to Hyprland autostart"
+fi
 install_app "GitHub CLI" gh omarchy pkg add gh
 if have bambu-studio; then
   echo "  → Bambu Studio already installed"
