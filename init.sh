@@ -48,4 +48,24 @@ echo "==> Restarting shell..."
 omarchy restart shell
 
 echo ""
+echo "==> Reverting config files overwritten by --adopt..."
+if command -v git >/dev/null 2>&1 && git -C "$REPO_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  MODIFIED="$(git -C "$REPO_DIR" diff --name-only; git -C "$REPO_DIR" diff --cached --name-only)"
+  if [ -n "$MODIFIED" ]; then
+    git -C "$REPO_DIR" checkout -- .
+    echo "  ✓ Reverted tracked config changes:"
+    echo "$MODIFIED" | sort -u | sed 's/^/      - /'
+  else
+    echo "  → Nothing to revert."
+  fi
+  ADOPTED="$(git -C "$REPO_DIR" ls-files --others --exclude-standard)"
+  if [ -n "$ADOPTED" ]; then
+    echo "  → New files adopted into the repo (left in place, review manually):"
+    echo "$ADOPTED" | sed 's/^/      - /'
+  fi
+else
+  echo "  → Not a git repo; skipping."
+fi
+
+echo ""
 echo "Done. All dotfiles linked."
