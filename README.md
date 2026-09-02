@@ -18,6 +18,10 @@ cd ~/dotfiles
 
 # One-command init: stows everything, applies shell.json, registers plugins, restarts shell
 ./init.sh
+
+# Install preferred apps, set Omarchy defaults (browser/editor/agent), install the
+# Midnight theme, and apply it. Prompts for sudo/yay credentials.
+./install-apps.sh
 ```
 
 For individual packages, stow manually:
