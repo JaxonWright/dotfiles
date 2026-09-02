@@ -47,6 +47,7 @@ install_app "Spicetify" spicetify omarchy pkg aur add spicetify-cli
 install_app "Discord" discord omarchy pkg add discord
 install_app "Steam" steam omarchy install gaming steam
 install_app "Arctis Manager" lam-gui omarchy pkg aur add linux-arctis-manager
+install_app "Solaar" solaar omarchy pkg add solaar
 install_app "GitHub CLI" gh omarchy pkg add gh
 if have bambu-studio; then
   echo "  → Bambu Studio already installed"
