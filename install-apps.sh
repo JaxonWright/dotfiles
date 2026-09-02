@@ -46,7 +46,29 @@ install_app "Spotify" spotify omarchy install service spotify
 install_app "Spicetify" spicetify omarchy pkg aur add spicetify-cli
 install_app "Discord" discord omarchy pkg add discord
 install_app "Steam" steam omarchy install gaming steam
-install_app "Arctis Manager" lam-gui omarchy pkg aur add linux-arctis-manager
+if have lam-gui; then
+  echo "  → Arctis Manager already installed"
+else
+  omarchy pkg aur add linux-arctis-manager
+  echo "  ✓ Arctis Manager"
+fi
+
+echo "  → Reloading Arctis Manager udev rules..."
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+if [ ! -f /usr/lib/udev/rules.d/91-steelseries-arctis.rules ]; then
+  echo "  → Warning: Arctis Manager udev rule not found on disk"
+fi
+echo "  ✓ Arctis Manager udev rule active"
+
+echo "  → Enabling Arctis Manager background service..."
+systemctl --user enable --now arctis-manager
+echo "  ✓ Arctis Manager service enabled at startup"
+
+echo "  → Enabling Arctis Manager system tray at login..."
+mkdir -p "$HOME/.config/autostart"
+cp -f /usr/share/applications/ArctisManagerSystray.desktop "$HOME/.config/autostart/"
+echo "  ✓ Arctis Manager tray autostart configured"
 if have solaar; then
   echo "  → Solaar already installed"
 else
