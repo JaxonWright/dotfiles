@@ -22,6 +22,9 @@ cd ~/dotfiles
 # Install preferred apps, set Omarchy defaults (browser/editor/agent), install the
 # Midnight theme, and apply it. Prompts for sudo/yay credentials.
 ./install-apps.sh
+
+# Install my favorite Omarchy plugins (time machine, hyprmoncfg, omaproton-vpn, mpris)
+./install-plugins.sh
 ```
 
 For individual packages, stow manually:
