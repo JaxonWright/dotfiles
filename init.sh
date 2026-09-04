@@ -36,17 +36,13 @@ for pkg in $STOWABLE; do
 done
 
 echo ""
-echo "==> Stowing omarchy plugins..."
-stow_pkg "omarchy"
-
-echo ""
 echo "==> Applying shell.json reference..."
 mkdir -p "$TARGET/.config/omarchy"
 cp "$REPO_DIR/omarchy/.config/omarchy/shell.json" "$TARGET/.config/omarchy/shell.json"
 echo "  ✓ shell.json"
 
 echo ""
-echo "==> Registering cloned plugins..."
+echo "==> Registering plugins..."
 omarchy plugin rescan
 
 echo ""

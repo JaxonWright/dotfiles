@@ -23,7 +23,7 @@ cd ~/dotfiles
 # Midnight theme, and apply it. Prompts for sudo/yay credentials.
 ./install-apps.sh
 
-# Install my favorite Omarchy plugins (time machine, hyprmoncfg, omaproton-vpn, mpris)
+# Install my favorite Omarchy plugins (time machine, hyprmoncfg, omaproton-vpn, wavebar)
 ./install-plugins.sh
 ```
 
@@ -49,27 +49,7 @@ stow --adopt --target=$HOME <package>   # existing files — adopts them into re
 
 > **Removed from old setup:** `waybar` (replaced by Omarchy Quickshell bar), `hypridle` (now in `shell.json` idle section), `hyprlock` (Omarchy uses its own lockscreen), NVIDIA env vars (auto-handled by defaults).
 
-## Applying `omarchy` (cloned plugins)
-
-The `omarchy` package contains cloned widgets with customizations:
-
-- **`local.clock`** — 12-hour time (hardcoded defaults + format ring, so right-click cycling stays 12-hour)
-- **`local.tray`** — No expand/collapse drawer; all tray items always visible
-
-To apply them:
-
-```sh
-# Stow the package (shell.json is excluded via .stow-local-ignore)
-stow --target=$HOME omarchy
-
-# Register the cloned plugins with Omarchy
-omarchy plugin rescan
-
-# Restart the shell to pick up the change
-omarchy restart shell
-```
-
-The `omarchy` package also includes `shell.json` as a reference template, but it should not be stowed — the shell writes to it at runtime. To apply the reference config:
+The `omarchy` package includes `shell.json` as a reference template, but it should not be stowed — the shell writes to it at runtime. To apply the reference config:
 
 ```sh
 cp Git/dotfiles/omarchy/.config/omarchy/shell.json ~/.config/omarchy/shell.json
