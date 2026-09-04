@@ -45,6 +45,7 @@ echo "==> Installing apps..."
 install_app "Spotify" spotify omarchy install service spotify
 install_app "Spicetify" spicetify omarchy pkg aur add spicetify-cli
 install_app "Discord" discord omarchy pkg add discord
+install_app "Signal" signal-desktop omarchy pkg add signal-desktop
 install_app "Steam" steam omarchy install gaming steam
 if have lam-gui; then
   echo "  → Arctis Manager already installed"
