@@ -1,0 +1,11 @@
+# Changes require a restart to take effect.
+
+# UWSM doesn't source /etc/profile.d, so pull the env bootstrap in directly.
+# This is the single source of truth for OMARCHY_PATH + PATH.
+[ -r /usr/share/omarchy/default/bash/env-bootstrap ] && . /usr/share/omarchy/default/bash/env-bootstrap
+
+# Set default terminal and editor
+source ~/.config/uwsm/default
+
+# Activate mise if present on the system
+omarchy-cmd-present mise && eval "$(mise activate bash --shims)"
