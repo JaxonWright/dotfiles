@@ -94,6 +94,7 @@ else
   echo "  ✓ Added to Hyprland autostart"
 fi
 install_app "OpenRGB" openrgb omarchy pkg add openrgb
+install_app "rclone" rclone omarchy pkg add rclone
 install_app "restic" restic omarchy pkg add restic
 install_app "GitHub CLI" gh omarchy pkg add gh
 if have bambu-studio; then
