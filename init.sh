@@ -4,6 +4,12 @@ set -e
 REPO_DIR="$(cd "$(dirname "$0")" && pwd)"
 TARGET="$HOME"
 
+if ! command -v stow >/dev/null 2>&1; then
+  echo "==> Installing stow..."
+  sudo apt-get install -y stow
+  echo "  ✓ stow"
+fi
+
 # Determine if --target is needed (stow defaults to parent of stow dir)
 if [ "$(dirname "$REPO_DIR")" != "$TARGET" ]; then
   TARGET_FLAG="--target=$TARGET"
