@@ -5,7 +5,7 @@ PLUGINS=(
   "jankeesvw.time-machine|https://github.com/jankeesvw/omarchy-time-machine.git"
   "crmne.hyprmoncfg|https://github.com/crmne/omarchy-hyprmoncfg.git"
   "io.github.grichard99.omaproton-vpn|https://github.com/grichard99/omaproton-vpn.git"
-  "crmne.mpris|https://github.com/crmne/omarchy-mpris.git"
+  "io.github.erikburdett.wavebar|https://github.com/ErikBurdett/omarchy-wavebar.git"
 )
 
 echo "==> Installing Omarchy plugins..."
