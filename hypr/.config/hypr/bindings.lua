@@ -32,6 +32,8 @@
 o.bind("SUPER + SHIFT + M", "Music", "omarchy-launch-or-focus spotify")
 o.bind("SUPER + SHIFT + ALT + M", "Music TUI", "omarchy-launch-or-focus-tui cliamp")
 o.bind("SUPER + SHIFT + C", "VS Code", { launch = "code" })
+-- Unbind default SUPER+SHIFT+D (was: Docker TUI)
+hl.unbind("SUPER + SHIFT + D")
 o.bind("SUPER + SHIFT + D", "Discord", { launch = "discord" })
 o.bind("SUPER + SHIFT + S", "Steam", { launch = "steam" })
 o.bind("SUPER + SHIFT + G", "Signal", { focus = "^signal$", launch = "signal-desktop" })
