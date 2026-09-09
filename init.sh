@@ -36,6 +36,12 @@ for pkg in $STOWABLE; do
 done
 
 echo ""
+echo "==> Configuring git..."
+git config --global pull.rebase true
+git config --global rebase.autoStash true
+echo "  ✓ pull.rebase, rebase.autoStash"
+
+echo ""
 echo "==> Applying shell.json reference..."
 mkdir -p "$TARGET/.config/omarchy"
 cp "$REPO_DIR/omarchy/.config/omarchy/shell.json" "$TARGET/.config/omarchy/shell.json"
