@@ -1,6 +1,6 @@
 # dotfiles
 
-My Linux configuration — Omarchy Quattro.
+My Linux configuration, running Omarchy Quattro.
 
 ## Setup
 
@@ -29,7 +29,7 @@ Two more scripts:
 | `ghostty` | Ghostty terminal config | Delegates to Omarchy theme |
 | `git` | Global git config (`~/.config/git/config`) | Replaces `~/.gitconfig` |
 | `hypr` | Hyprland compositor (Lua config) | Quattro format |
-| `omarchy` | `shell.json` reference copy | Copied, never stowed — see below |
+| `omarchy` | `shell.json` reference copy | Copied, never stowed (see below) |
 | `spicetify` | Spotify client mod | |
 | `starship` | Shell prompt | |
 | `uwsm` | Universal Wayland Session Manager | |
@@ -39,10 +39,10 @@ To stow one package by hand:
 
 ```sh
 stow --target=$HOME <package>           # fresh system
-stow --adopt --target=$HOME <package>   # existing files — adopts them into repo
+stow --adopt --target=$HOME <package>   # existing files, adopts them into repo
 ```
 
-The Omarchy shell writes to `shell.json` at runtime, so that package is copied rather than symlinked. `init.sh` does this; to re-apply it later:
+The Omarchy shell writes to `shell.json` at runtime, so that package gets copied rather than symlinked. `init.sh` handles it. To re-apply it later:
 
 ```sh
 cp omarchy/.config/omarchy/shell.json ~/.config/omarchy/shell.json
