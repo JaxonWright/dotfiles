@@ -17,7 +17,7 @@ else
   TARGET_FLAG=""
 fi
 
-STOWABLE="bash foot ghostty hypr spicetify starship uwsm walker"
+STOWABLE="bash foot ghostty git hypr spicetify starship uwsm walker"
 
 stow_pkg() {
   local pkg="$1"
@@ -34,12 +34,6 @@ echo "==> Stowing packages..."
 for pkg in $STOWABLE; do
   [ -d "$REPO_DIR/$pkg" ] && stow_pkg "$pkg"
 done
-
-echo ""
-echo "==> Configuring git..."
-git config --global pull.rebase true
-git config --global rebase.autoStash true
-echo "  ✓ pull.rebase, rebase.autoStash"
 
 echo ""
 echo "==> Applying shell.json reference..."

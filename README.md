@@ -41,6 +41,7 @@ stow --adopt --target=$HOME <package>   # existing files — adopts them into re
 | `bash` | Bash shell init (starship, nvm) | |
 | `foot` | Foot terminal config | Delegates to Omarchy theme |
 | `ghostty` | Ghostty terminal config | Delegates to Omarchy theme |
+| `git` | Global git config (`~/.config/git/config`) | Replaces `~/.gitconfig` |
 | `hypr` | Hyprland compositor (Lua config) | Quattro format |
 | `spicetify` | Spotify client mod | |
 | `starship` | Shell prompt | |
