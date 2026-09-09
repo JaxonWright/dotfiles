@@ -31,6 +31,8 @@
 -- Personal application bindings (restored from the pre-Quattro bindings.conf).
 o.bind("SUPER + SHIFT + M", "Music", "omarchy-launch-or-focus spotify")
 o.bind("SUPER + SHIFT + ALT + M", "Music TUI", "omarchy-launch-or-focus-tui cliamp")
+-- Unbind default SUPER+SHIFT+C (was: Calendar webapp)
+hl.unbind("SUPER + SHIFT + C")
 o.bind("SUPER + SHIFT + C", "VS Code", { launch = "code" })
 -- Unbind default SUPER+SHIFT+D (was: Docker TUI)
 hl.unbind("SUPER + SHIFT + D")
