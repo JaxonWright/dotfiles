@@ -1,39 +1,24 @@
 # dotfiles
 
-dotfiles for my Linux configuration(s) — Omarchy Quattro.
-
-## Prerequisites
-
-```sh
-# Install stow (Arch)
-yay -S stow
-```
+My Linux configuration — Omarchy Quattro.
 
 ## Setup
 
 ```sh
-# Clone into any directory
-git clone https://github.com/jaxon/dotfiles ~/dotfiles
+yay -S stow                                                  # prerequisite (Arch)
+git clone https://github.com/JaxonWright/dotfiles ~/dotfiles   # any directory works
 cd ~/dotfiles
-
-# One-command init: stows everything, applies shell.json, registers plugins, restarts shell
 ./init.sh
-
-# Install preferred apps, nvm + the latest Node LTS, set Omarchy defaults
-# (browser/editor/agent), install the Midnight theme, and apply it.
-# Prompts for sudo/yay credentials.
-./install-apps.sh
-
-# Install my favorite Omarchy plugins (time machine, hyprmoncfg, omaproton-vpn, wavebar)
-./install-plugins.sh
 ```
 
-For individual packages, stow manually:
+`init.sh` stows every package, applies `shell.json`, registers plugins, and restarts the shell.
 
-```sh
-stow --target=$HOME <package>           # fresh system
-stow --adopt --target=$HOME <package>   # existing files — adopts them into repo
-```
+Two more scripts:
+
+| Script | Installs |
+|--------|----------|
+| `./install-apps.sh` | Preferred apps, nvm + the latest Node LTS, Omarchy defaults (browser/editor/agent), the Midnight theme. Prompts for sudo/yay credentials. |
+| `./install-plugins.sh` | Omarchy plugins: time machine, hyprmoncfg, omaproton-vpn, wavebar. |
 
 ## Packages
 
@@ -44,15 +29,23 @@ stow --adopt --target=$HOME <package>   # existing files — adopts them into re
 | `ghostty` | Ghostty terminal config | Delegates to Omarchy theme |
 | `git` | Global git config (`~/.config/git/config`) | Replaces `~/.gitconfig` |
 | `hypr` | Hyprland compositor (Lua config) | Quattro format |
+| `omarchy` | `shell.json` reference copy | Copied, never stowed — see below |
 | `spicetify` | Spotify client mod | |
 | `starship` | Shell prompt | |
 | `uwsm` | Universal Wayland Session Manager | |
 | `walker` | Application launcher | |
 
-> **Removed from old setup:** `waybar` (replaced by Omarchy Quickshell bar), `hypridle` (now in `shell.json` idle section), `hyprlock` (Omarchy uses its own lockscreen), NVIDIA env vars (auto-handled by defaults).
-
-The `omarchy` package includes `shell.json` as a reference template, but it should not be stowed — the shell writes to it at runtime. To apply the reference config:
+To stow one package by hand:
 
 ```sh
-cp Git/dotfiles/omarchy/.config/omarchy/shell.json ~/.config/omarchy/shell.json
+stow --target=$HOME <package>           # fresh system
+stow --adopt --target=$HOME <package>   # existing files — adopts them into repo
 ```
+
+The Omarchy shell writes to `shell.json` at runtime, so that package is copied rather than symlinked. `init.sh` does this; to re-apply it later:
+
+```sh
+cp omarchy/.config/omarchy/shell.json ~/.config/omarchy/shell.json
+```
+
+> **Removed from old setup:** `waybar` (replaced by Omarchy Quickshell bar), `hypridle` (now in `shell.json` idle section), `hyprlock` (Omarchy uses its own lockscreen), NVIDIA env vars (auto-handled by defaults).
