@@ -5,13 +5,12 @@ My Linux configuration, running Omarchy Quattro.
 ## Setup
 
 ```sh
-yay -S stow                                                  # prerequisite (Arch)
 git clone https://github.com/JaxonWright/dotfiles ~/dotfiles   # any directory works
 cd ~/dotfiles
 ./init.sh
 ```
 
-`init.sh` stows every package, applies `shell.json`, registers plugins, and restarts the shell.
+`init.sh` installs stow if it is missing, stows every package, applies `shell.json`, registers plugins, and restarts the shell.
 
 Two more scripts:
 
