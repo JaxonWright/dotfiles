@@ -112,6 +112,31 @@ omarchy pkg add starship
 echo "  ✓ Starship"
 
 echo ""
+echo "==> Installing nvm and Node LTS..."
+NVM_DIR="$HOME/.config/nvm"   # Matches the NVM_DIR exported in bash/.bashrc
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+  echo "  → nvm already installed"
+else
+  git clone --quiet https://github.com/nvm-sh/nvm.git "$NVM_DIR"
+  git -C "$NVM_DIR" checkout --quiet \
+    "$(git -C "$NVM_DIR" describe --abbrev=0 --tags --match 'v[0-9]*' \
+       "$(git -C "$NVM_DIR" rev-list --tags --max-count=1)")"
+  echo "  ✓ nvm $(git -C "$NVM_DIR" describe --tags)"
+fi
+
+export NVM_DIR
+set +e
+. "$NVM_DIR/nvm.sh"
+nvm install --lts && nvm alias default 'lts/*' >/dev/null
+NVM_STATUS=$?
+set -e
+if [ "$NVM_STATUS" -ne 0 ]; then
+  echo "  → Warning: could not install Node LTS with nvm" >&2
+else
+  echo "  ✓ Node $(node --version) (LTS, nvm default)"
+fi
+
+echo ""
 echo "==> Setting Omarchy defaults..."
 omarchy default browser brave
 omarchy default editor code
