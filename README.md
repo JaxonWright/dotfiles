@@ -47,5 +47,3 @@ The Omarchy shell writes to `shell.json` at runtime, so that package is copied r
 ```sh
 cp omarchy/.config/omarchy/shell.json ~/.config/omarchy/shell.json
 ```
-
-> **Removed from old setup:** `waybar` (replaced by Omarchy Quickshell bar), `hypridle` (now in `shell.json` idle section), `hyprlock` (Omarchy uses its own lockscreen), NVIDIA env vars (auto-handled by defaults).
