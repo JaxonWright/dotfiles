@@ -6,7 +6,7 @@ TARGET="$HOME"
 
 if ! command -v stow >/dev/null 2>&1; then
   echo "==> Installing stow..."
-  sudo apt-get install -y stow
+  omarchy pkg add stow
   echo "  ✓ stow"
 fi
 
