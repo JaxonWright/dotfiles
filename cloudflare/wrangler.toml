@@ -1,0 +1,9 @@
+name = "init-jaxon-dev"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+# Binds the Worker to the hostname and creates the DNS record for it.
+# Requires the jaxon.dev zone to be in the same Cloudflare account.
+routes = [
+  { pattern = "init.jaxon.dev", custom_domain = true }
+]
