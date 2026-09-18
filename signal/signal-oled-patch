@@ -1,0 +1,211 @@
+#!/usr/bin/env python3
+"""Repaint Signal Desktop's dark theme to true black, for OLED screens.
+
+Signal has no OLED theme, and its dark palette lives in two layers inside
+app.asar, both of which have to be recoloured or the change is invisible:
+
+  stylesheets/manifest.css   legacy components, ~1000 hardcoded `.dark-theme`
+                             rules (the conversation area, dialogs, left pane)
+  stylesheets/tailwind.css   the newer "axo" design tokens, which paint a
+                             translucent surface *over* the legacy background,
+                             so patching manifest.css alone only gets you to
+                             about #0c0c0c instead of black
+
+Only dark values are touched -- `background`/`background-color` inside rules
+whose selector mentions `dark-theme`, and the second argument of the axo
+tokens' `light-dark(light, dark)` pairs -- so the light theme is untouched, as
+are surfaces that are dark in both themes (call UI, media editor, story
+creator). The elevated greys (#3b3b3b, tertiary/quaternary) are deliberately
+left alone so hover states and menus stay visible against black.
+
+Every replacement is padded to the exact byte length of what it replaces, so
+all offsets in the asar index stay valid and the archive needs no repacking.
+
+Idempotent: re-running on an already-patched file is a no-op. That is what
+makes it safe to drive from a pacman hook after each signal-desktop upgrade.
+"""
+
+import json
+import os
+import re
+import struct
+import sys
+import tempfile
+from pathlib import Path
+
+ASAR = Path("/usr/lib/signal-desktop/resources/app.asar")
+
+# --- layer 1: legacy .dark-theme rules in manifest.css ----------------------
+SURFACES = {"#121212": "#000000", "#2e2e2e": "#000000"}
+DECL = re.compile(r"(background(?:-color)?:\s*)(#[0-9a-fA-F]{6})")
+RULE = re.compile(r"([^{}]+)\{([^{}]*)\}")
+
+# --- layer 2: axo design tokens in tailwind.css -----------------------------
+# Primary and secondary are the app's own body; tertiary and up are menus,
+# popovers and pressed states, which need to stay lighter than the background.
+TOKENS = (
+    "material-primary",
+    "material-secondary",
+    "surface-primary",
+    "surface-secondary",
+)
+TOKEN = re.compile(
+    r"(--axo-color-(?:" + "|".join(TOKENS) + r"):light-dark\()([^;}]*?)(\))(?=[;}])"
+)
+
+
+def locate(asar: Path):
+    """Return (data_base, index) for an asar archive."""
+    with asar.open("rb") as f:
+        head = f.read(16)
+        if len(head) < 16:
+            sys.exit(f"{asar}: too short to be an asar archive")
+        _, pickle_size, _, json_len = struct.unpack("<IIII", head)
+        index = json.loads(f.read(json_len).decode("utf-8"))
+    # 8 + pickle_size accounts for the header's 4-byte alignment padding;
+    # 16 + json_len happens to agree only when json_len is already aligned.
+    return 8 + pickle_size, index
+
+
+def entry(index: dict, target: str):
+    def walk(node, path=""):
+        for name, value in node.get("files", {}).items():
+            cur = f"{path}/{name}"
+            if "files" in value:
+                found = walk(value, cur)
+                if found:
+                    return found
+            elif cur == target:
+                return value
+        return None
+
+    return walk(index)
+
+
+def split_args(text: str):
+    """Split `a,b` on the comma that is not nested inside parentheses."""
+    depth = 0
+    for i, ch in enumerate(text):
+        if ch == "(":
+            depth += 1
+        elif ch == ")":
+            depth -= 1
+        elif ch == "," and depth == 0:
+            return text[:i], text[i + 1 :]
+    return None, None
+
+
+def fit(new: str, old: str):
+    """Pad `new` with spaces to `old`'s length. CSS ignores the padding."""
+    if len(new) > len(old):
+        return None
+    return new + " " * (len(old) - len(new))
+
+
+def patch_manifest(css: str):
+    count = 0
+
+    def rule(match):
+        nonlocal count
+        selector, body = match.group(1), match.group(2)
+        if "dark-theme" not in selector:
+            return match.group(0)
+
+        def decl(d):
+            nonlocal count
+            replacement = SURFACES.get(d.group(2).lower())
+            if replacement is None:
+                return d.group(0)
+            count += 1
+            return d.group(1) + replacement
+
+        return f"{selector}{{{DECL.sub(decl, body)}}}"
+
+    return RULE.sub(rule, css), count
+
+
+def patch_tailwind(css: str):
+    count = 0
+
+    def token(match):
+        nonlocal count
+        head, args, tail = match.group(1), match.group(2), match.group(3)
+        light, dark = split_args(args)
+        if dark is None:
+            return match.group(0)
+        # Keep any alpha the token carried, so Signal's intended translucency
+        # survives; an opaque token just becomes flat black.
+        alpha = re.search(r"/([0-9.]+)\)\s*$", dark)
+        black = f"oklab(0% 0 0/{alpha.group(1)})" if alpha else "#000000"
+        if black.rstrip() == dark.rstrip():
+            return match.group(0)
+        padded = fit(black, dark)
+        if padded is None:
+            return match.group(0)
+        count += 1
+        return f"{head}{light},{padded}{tail}"
+
+    return TOKEN.sub(token, css), count
+
+
+LAYERS = (
+    ("/stylesheets/manifest.css", patch_manifest, b".dark-theme"),
+    ("/stylesheets/tailwind.css", patch_tailwind, b"--axo-color-"),
+)
+
+
+def main():
+    global ASAR
+    if len(sys.argv) > 1:  # patch a copy instead; used to rehearse before installing
+        ASAR = Path(sys.argv[1])
+    if not ASAR.exists():
+        sys.exit(f"{ASAR}: not found (is signal-desktop installed?)")
+
+    base, index = locate(ASAR)
+    raw = ASAR.read_bytes()
+    out = bytearray(raw)
+    total = 0
+    report = []
+
+    for name, patcher, sentinel in LAYERS:
+        meta = entry(index, name)
+        if meta is None:
+            sys.exit(f"{ASAR}: {name} not found in archive index")
+        off, size = base + int(meta["offset"]), int(meta["size"])
+        region = raw[off : off + size]
+        if sentinel not in region:
+            sys.exit(f"{ASAR}: {name} does not look like Signal's stylesheet; refusing to patch")
+
+        patched, count = patcher(region.decode("utf-8"))
+        if count == 0:
+            continue
+        encoded = patched.encode("utf-8")
+        if len(encoded) != size:
+            sys.exit(f"signal-oled: refusing to write, {name} changed size {size} -> {len(encoded)}")
+        out[off : off + size] = encoded
+        total += count
+        report.append(f"{count} in {Path(name).name}")
+
+    if total == 0:
+        print("signal-oled: already black, nothing to do")
+        return
+
+    # Write a whole new file and rename it over the original, so an interrupted
+    # run can never leave a half-written 38MB bundle behind.
+    stat = ASAR.stat()
+    fd, tmp = tempfile.mkstemp(dir=str(ASAR.parent), prefix=".app.asar.oled-")
+    try:
+        with os.fdopen(fd, "wb") as f:
+            f.write(out)
+        os.chmod(tmp, stat.st_mode & 0o7777)
+        os.chown(tmp, stat.st_uid, stat.st_gid)
+        os.replace(tmp, ASAR)
+    except BaseException:
+        Path(tmp).unlink(missing_ok=True)
+        raise
+
+    print(f"signal-oled: blackened {total} declarations ({', '.join(report)})")
+
+
+if __name__ == "__main__":
+    main()

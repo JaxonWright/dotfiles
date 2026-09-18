@@ -45,6 +45,15 @@ echo "==> Installing apps..."
 install_app "Spotifast" spotifast omarchy pkg aur add spotifast-bin
 install_app "Discord" discord omarchy pkg add discord
 install_app "Signal" signal-desktop omarchy pkg add signal-desktop
+
+echo "  → Applying Signal OLED black theme..."
+sudo install -d -m 755 /var/cache/signal-oled
+sudo cp -n /usr/lib/signal-desktop/resources/app.asar /var/cache/signal-oled/app.asar.orig
+sudo install -m 755 -o root -g root "$REPO_DIR/signal/signal-oled-patch" /usr/local/bin/signal-oled-patch
+sudo install -d -m 755 /etc/pacman.d/hooks
+sudo install -m 644 -o root -g root "$REPO_DIR/signal/signal-oled.hook" /etc/pacman.d/hooks/signal-oled.hook
+sudo /usr/local/bin/signal-oled-patch
+echo "  ✓ Signal OLED black (pacman hook re-applies it on upgrade)"
 install_app "Steam" steam omarchy install gaming steam
 if have lam-gui; then
   echo "  → Arctis Manager already installed"

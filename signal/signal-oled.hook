@@ -1,0 +1,14 @@
+# Signal ships no OLED theme and a package upgrade restores the stock dark
+# palette, so re-derive and re-apply the patch after signal-desktop changes.
+# The script is idempotent and refuses to write if the stylesheet moved.
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = signal-desktop
+
+[Action]
+Description = Repainting Signal's dark theme black for OLED...
+When = PostTransaction
+Exec = /usr/local/bin/signal-oled-patch
+Depends = python
