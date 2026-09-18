@@ -29,7 +29,11 @@
 -- o.bind("SUPER + PERIOD", nil, "omarchy-shell shell toggle omarchy.emojis")
 
 -- Personal application bindings (restored from the pre-Quattro bindings.conf).
+-- Unbind default SUPER+SHIFT+M (was: Spotify)
+hl.unbind("SUPER + SHIFT + M")
 o.bind("SUPER + SHIFT + M", "Music", { focus = "^fastpotify$", launch = "spotifast" })
+-- Unbind default SUPER+SHIFT+ALT+M (was: cliamp TUI)
+hl.unbind("SUPER + SHIFT + ALT + M")
 o.bind("SUPER + SHIFT + ALT + M", "Music TUI", "omarchy-launch-or-focus-tui cliamp")
 -- Unbind default SUPER+SHIFT+C (was: Calendar webapp)
 hl.unbind("SUPER + SHIFT + C")
@@ -40,4 +44,6 @@ o.bind("SUPER + SHIFT + D", "Discord", { launch = "discord" })
 -- Unbind default SUPER+SHIFT+S (was: Google Maps webapp)
 hl.unbind("SUPER + SHIFT + S")
 o.bind("SUPER + SHIFT + S", "Steam", { launch = "steam" })
+-- Unbind default SUPER+SHIFT+G (was: Signal webapp)
+hl.unbind("SUPER + SHIFT + G")
 o.bind("SUPER + SHIFT + G", "Signal", { focus = "^signal$", launch = "signal-desktop" })
