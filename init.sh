@@ -36,20 +36,6 @@ for pkg in $STOWABLE; do
 done
 
 echo ""
-echo "==> Applying shell.json reference..."
-mkdir -p "$TARGET/.config/omarchy"
-cp "$REPO_DIR/omarchy/.config/omarchy/shell.json" "$TARGET/.config/omarchy/shell.json"
-echo "  ✓ shell.json"
-
-echo ""
-echo "==> Registering plugins..."
-omarchy plugin rescan
-
-echo ""
-echo "==> Restarting shell..."
-omarchy restart shell
-
-echo ""
 echo "==> Reverting config files overwritten by --adopt..."
 if command -v git >/dev/null 2>&1 && git -C "$REPO_DIR" rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   MODIFIED="$(git -C "$REPO_DIR" diff --name-only; git -C "$REPO_DIR" diff --cached --name-only)"

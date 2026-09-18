@@ -40,7 +40,7 @@ Run other scripts as you desire.
 
 | Script | Installs |
 |--------|----------|
-| `./init.sh` | Installs stow if it is missing, stows every package, applies `shell.json`, registers plugins, and restarts the shell. |
+| `./init.sh` | Installs stow if it is missing and stows every package. |
 | `./install-apps.sh` | Preferred apps, nvm + the latest Node LTS, Omarchy defaults (browser/editor/agent), the Midnight theme. Prompts for sudo/yay credentials. |
 | `./install-plugins.sh` | Omarchy plugins: time machine, hyprmoncfg, omaproton-vpn, wavebar. |
 | `./bootstrap.sh` | Clones the repo and runs the three scripts above. This is what `init.jaxon.dev` serves. |
@@ -54,7 +54,6 @@ Run other scripts as you desire.
 | `ghostty` | Ghostty terminal config | Delegates to Omarchy theme |
 | `git` | Global git config (`~/.config/git/config`) | Replaces `~/.gitconfig` |
 | `hypr` | Hyprland compositor (Lua config) | Quattro format |
-| `omarchy` | `shell.json` reference copy | Copied, never stowed (see below) |
 | `starship` | Shell prompt | |
 | `uwsm` | Universal Wayland Session Manager | |
 | `walker` | Application launcher | |
@@ -64,12 +63,6 @@ To stow one package by hand:
 ```sh
 stow --target=$HOME <package>           # fresh system
 stow --adopt --target=$HOME <package>   # existing files, adopts them into repo
-```
-
-The Omarchy shell writes to `shell.json` at runtime, so that package gets copied rather than symlinked. `init.sh` handles it. To re-apply it later:
-
-```sh
-cp omarchy/.config/omarchy/shell.json ~/.config/omarchy/shell.json
 ```
 
 ## Cloudflare Worker? Hardly Know 'er
