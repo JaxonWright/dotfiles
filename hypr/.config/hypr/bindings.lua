@@ -29,7 +29,7 @@
 -- o.bind("SUPER + PERIOD", nil, "omarchy-shell shell toggle omarchy.emojis")
 
 -- Personal application bindings (restored from the pre-Quattro bindings.conf).
-o.bind("SUPER + SHIFT + M", "Music", "omarchy-launch-or-focus spotify")
+o.bind("SUPER + SHIFT + M", "Music", { focus = "^fastpotify$", launch = "spotifast" })
 o.bind("SUPER + SHIFT + ALT + M", "Music TUI", "omarchy-launch-or-focus-tui cliamp")
 -- Unbind default SUPER+SHIFT+C (was: Calendar webapp)
 hl.unbind("SUPER + SHIFT + C")

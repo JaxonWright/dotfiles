@@ -29,7 +29,6 @@ Two more scripts:
 | `git` | Global git config (`~/.config/git/config`) | Replaces `~/.gitconfig` |
 | `hypr` | Hyprland compositor (Lua config) | Quattro format |
 | `omarchy` | `shell.json` reference copy | Copied, never stowed (see below) |
-| `spicetify` | Spotify client mod | |
 | `starship` | Shell prompt | |
 | `uwsm` | Universal Wayland Session Manager | |
 | `walker` | Application launcher | |
