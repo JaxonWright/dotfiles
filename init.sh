@@ -17,7 +17,7 @@ else
   TARGET_FLAG=""
 fi
 
-STOWABLE="bash foot ghostty git hypr spicetify starship uwsm walker"
+STOWABLE="bash foot ghostty git hypr starship uwsm walker"
 
 stow_pkg() {
   local pkg="$1"

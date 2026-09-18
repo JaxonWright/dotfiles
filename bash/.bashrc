@@ -1,8 +1,6 @@
 source "${OMARCHY_PATH:-/usr/share/omarchy}/default/bash/rc"
 alias code=vscodium-electron
 
-export PATH=$PATH:/home/jaxon/.spicetify
-
 eval "$(starship init bash)"
 
 export NVM_DIR="$HOME/.config/nvm"
