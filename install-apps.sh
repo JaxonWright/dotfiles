@@ -78,29 +78,7 @@ echo "  → Enabling Arctis Manager system tray at login..."
 mkdir -p "$HOME/.config/autostart"
 cp -f /usr/share/applications/ArctisManagerSystray.desktop "$HOME/.config/autostart/"
 echo "  ✓ Arctis Manager tray autostart configured"
-if have solaar; then
-  echo "  → Solaar already installed"
-else
-  omarchy pkg add solaar
-  echo "  ✓ Solaar"
-fi
 
-echo "  → Reloading Solaar udev rules..."
-sudo udevadm control --reload-rules
-sudo udevadm trigger
-if [ ! -f /usr/lib/udev/rules.d/42-logitech-unify-permissions.rules ]; then
-  echo "  → Warning: Solaar udev rule not found on disk"
-fi
-echo "  ✓ Solaar udev rule active"
-
-echo "  → Enabling Solaar at startup..."
-AUTOSTART="$REPO_DIR/hypr/.config/hypr/autostart.lua"
-if grep -qs 'solaar' "$AUTOSTART"; then
-  echo "  → Already in Hyprland autostart"
-else
-  printf '\no.launch_on_start("solaar --window=hide")\n' >> "$AUTOSTART"
-  echo "  ✓ Added to Hyprland autostart"
-fi
 install_app "OpenRGB" openrgb omarchy pkg add openrgb
 install_app "rclone" rclone omarchy pkg add rclone
 install_app "restic" restic omarchy pkg add restic
