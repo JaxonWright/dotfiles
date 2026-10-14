@@ -41,6 +41,10 @@ echo "==> Installing editor..."
 install_app "VS Code" code omarchy install editor vscode
 
 echo ""
+echo "==> Installing AI apps..."
+install_app "Grok Bot" grok-bot omarchy install and launch "Grok Bot" grok-bot grok-bot
+
+echo ""
 echo "==> Installing apps..."
 install_app "Spotifast" spotifast omarchy pkg aur add spotifast-bin
 install_app "Discord" discord omarchy pkg add discord
