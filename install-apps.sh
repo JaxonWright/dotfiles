@@ -43,6 +43,14 @@ install_app "VS Code" code omarchy install editor vscode
 echo ""
 echo "==> Installing AI apps..."
 install_app "Grok Bot" grok-bot omarchy install and launch "Grok Bot" grok-bot grok-bot
+install_claude() {
+  omarchy install ai claude && return
+  # Older Omarchy releases lack the action; do what it does by hand.
+  echo "  → omarchy install ai claude unavailable; installing claude-desktop directly"
+  omarchy pkg add claude-desktop
+  setsid uwsm-app -- /usr/bin/claude-desktop >/dev/null 2>&1 &
+}
+install_app "Claude" claude-desktop install_claude
 
 echo ""
 echo "==> Installing apps..."
