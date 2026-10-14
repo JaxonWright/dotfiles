@@ -2,7 +2,10 @@
 
 -- Dedicated workspaces for apps.
 o.window("brave-browser", { workspace = "1" })
-o.window("discord", { workspace = "2 silent", no_initial_focus = true, focus_on_activate = false })
+-- Chat apps share workspace 2 and stay unfocused on autostart.
+for _, class in ipairs({ "discord", "signal", "grok-bot" }) do
+  o.window(class, { workspace = "2 silent", no_initial_focus = true, focus_on_activate = false })
+end
 
 -- Signal is patched to a true-black OLED theme (see signal/signal-oled-patch),
 -- so opt it out of Omarchy's default window opacity: at 0.96 the wallpaper
