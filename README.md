@@ -42,7 +42,7 @@ Run other scripts as you desire.
 |--------|----------|
 | `./init.sh` | Installs stow if it is missing and stows every package. |
 | `./install-apps.sh` | Preferred apps, nvm + the latest Node LTS, Omarchy defaults (browser/editor/agent), the Midnight theme. Prompts for sudo/yay credentials. |
-| `./install-plugins.sh` | Omarchy plugins: time machine, hyprmoncfg, omaproton-vpn, wavebar. |
+| `./install-plugins.sh` | Omarchy plugins: time machine, hyprmoncfg, omaproton-vpn, wavebar, omabot. |
 | `./bootstrap.sh` | Clones the repo and runs the three scripts above. This is what `init.jaxon.dev` serves. |
 
 ## Packages

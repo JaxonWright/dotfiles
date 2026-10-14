@@ -6,6 +6,7 @@ PLUGINS=(
   "crmne.hyprmoncfg|https://github.com/crmne/omarchy-hyprmoncfg.git"
   "io.github.grichard99.omaproton-vpn|https://github.com/grichard99/omaproton-vpn.git"
   "io.github.erikburdett.wavebar|https://github.com/ErikBurdett/omarchy-wavebar.git"
+  "njpatel.omabot|https://github.com/njpatel/omabot.git"
 )
 
 echo "==> Installing Omarchy plugins..."
