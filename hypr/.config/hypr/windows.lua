@@ -7,48 +7,98 @@ for _, class in ipairs({ "discord", "signal", "grok-bot" }) do
   o.window(class, { workspace = "2 silent", no_initial_focus = true, focus_on_activate = false })
 end
 
--- Workspace 2 tiles the chat apps as fixed columns, ordered by class rather
--- than by whichever app happens to map first on boot. Weights are relative
--- widths; any other window gets an average share and goes on the right.
+-- Arrange workspace 2 as discord | grok | signal columns once all three are
+-- open, then leave it as ordinary dwindle so the splits stay resizable. Dwindle
+-- alone places them by whichever app maps first on boot. Weights are widths.
 local chat_columns = {
-  { class = "discord", weight = 0.522 },
-  { class = "grok-bot", weight = 0.299 },
-  { class = "signal", weight = 0.179 },
+  { class = "discord", weight = 0.521 },
+  { class = "grok-bot", weight = 0.298 },
+  { class = "signal", weight = 0.181 },
 }
-hl.layout.register("chat", {
-  recalculate = function(ctx)
-    local order, weight = {}, {}
-    for i, column in ipairs(chat_columns) do
-      order[column.class], weight[column.class] = i, column.weight
-    end
 
-    local targets = {}
-    for _, target in ipairs(ctx.targets) do
-      targets[#targets + 1] = target
+local function chat_windows()
+  local by_class, tiled = {}, 0
+  for _, window in ipairs(hl.get_workspace_windows("2")) do
+    if not window.floating then
+      by_class[window.class] = window
+      tiled = tiled + 1
     end
-    local function class_of(target)
-      return target.window and target.window.class or ""
-    end
-    table.sort(targets, function(a, b)
-      local oa, ob = order[class_of(a)] or math.huge, order[class_of(b)] or math.huge
-      if oa ~= ob then return oa < ob end
-      return a.index < b.index
-    end)
+  end
+  if tiled ~= #chat_columns then return nil end
+  for _, column in ipairs(chat_columns) do
+    if not by_class[column.class] then return nil end
+  end
+  return by_class
+end
 
-    local total = 0
-    for _, target in ipairs(targets) do
-      total = total + (weight[class_of(target)] or 1 / #chat_columns)
-    end
-    local x = ctx.area.x
-    for i, target in ipairs(targets) do
-      local w = ctx.area.w * (weight[class_of(target)] or 1 / #chat_columns) / total
-      if i == #targets then w = ctx.area.x + ctx.area.w - x end
-      target:place({ x = x, y = ctx.area.y, w = w, h = ctx.area.h })
-      x = x + w
-    end
-  end,
-})
-hl.workspace_rule({ workspace = "2", layout = "lua:chat" })
+local function target(window)
+  return "address:" .. window.address
+end
+
+-- Expects the fresh dwindle tree that rebuild_chat leaves: one full-height
+-- window beside a stacked pair. Turns it into discord | (grok | signal).
+-- swapsplit and togglesplit only act on the focused window, so focus is
+-- restored after.
+local function arrange_chat(previous)
+  local windows = chat_windows()
+  if not windows then return end
+  local discord, grok, signal = windows["discord"], windows["grok-bot"], windows["signal"]
+
+  local single
+  for _, window in pairs(windows) do
+    if not single or window.size.y > single.size.y then single = window end
+  end
+  if single.address ~= discord.address then
+    hl.dispatch(hl.dsp.window.swap({ window = target(discord), target = target(single) }))
+  end
+  windows = chat_windows()
+  if windows["discord"].at.x > windows["grok-bot"].at.x then
+    hl.dispatch(hl.dsp.focus({ window = target(discord) }))
+    hl.dispatch(hl.dsp.layout("swapsplit"))
+  end
+  windows = chat_windows()
+  if windows["grok-bot"].at.x == windows["signal"].at.x then
+    hl.dispatch(hl.dsp.focus({ window = target(grok) }))
+    hl.dispatch(hl.dsp.layout("togglesplit"))
+  end
+  windows = chat_windows()
+  if windows["grok-bot"].at.x > windows["signal"].at.x then
+    hl.dispatch(hl.dsp.window.swap({ window = target(grok), target = target(signal) }))
+  end
+  if previous then hl.dispatch(hl.dsp.focus({ window = target(previous) })) end
+
+  -- A resize moves the window's right edge: discord sets the outer split,
+  -- then grok the inner one.
+  windows = chat_windows()
+  local span = windows["signal"].at.x + windows["signal"].size.x - windows["discord"].at.x
+  for i = 1, #chat_columns - 1 do
+    local window = chat_windows()[chat_columns[i].class]
+    hl.dispatch(hl.dsp.window.resize({ window = target(window), x = math.floor(span * chat_columns[i].weight), y = window.size.y }))
+  end
+end
+
+-- Bouncing through another layout makes dwindle rebuild the workspace from
+-- scratch, whatever splits it had. Rule changes land on the next tick.
+local function rebuild_chat()
+  if not chat_windows() then return end
+  local previous = hl.get_active_window()
+  hl.workspace_rule({ workspace = "2", layout = "master" })
+  hl.timer(function()
+    hl.workspace_rule({ workspace = "2", layout = "dwindle" })
+    hl.timer(function() arrange_chat(previous) end, { timeout = 100, type = "oneshot" })
+  end, { timeout = 100, type = "oneshot" })
+end
+
+local chat_classes = {}
+for _, column in ipairs(chat_columns) do
+  chat_classes[column.class] = true
+end
+hl.on("window.open", function(window)
+  if window and chat_classes[window.class] then
+    -- Give the window a moment to map and land on workspace 2.
+    hl.timer(rebuild_chat, { timeout = 1500, type = "oneshot" })
+  end
+end)
 
 -- Signal is patched to a true-black OLED theme (see signal/signal-oled-patch),
 -- so opt it out of Omarchy's default window opacity: at 0.96 the wallpaper
