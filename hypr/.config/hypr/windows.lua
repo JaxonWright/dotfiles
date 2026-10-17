@@ -100,10 +100,10 @@ hl.on("window.open", function(window)
   end
 end)
 
--- Signal is patched to a true-black OLED theme (see signal/signal-oled-patch),
--- so opt it out of Omarchy's default window opacity: at 0.96 the wallpaper
--- shows through and the background is no longer actually black.
-o.window("signal", { tag = "-default-opacity", opacity = "1 1" })
+-- Opt every window out of Omarchy's default opacity (0.985 active, 0.96
+-- inactive, and 0.985 inactive for browsers). This also keeps Signal's
+-- true-black OLED theme (see signal/signal-oled-patch) actually black.
+o.window(".*", { tag = "-default-opacity", opacity = "1 1" })
 o.window("fastpotify", { workspace = "3 silent" })
 
 -- Steam: workspace 4, unfocused on autostart. Omarchy floats every steam
