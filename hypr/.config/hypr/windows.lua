@@ -104,7 +104,7 @@ end)
 -- inactive, and 0.985 inactive for browsers). This also keeps Signal's
 -- true-black OLED theme (see signal/signal-oled-patch) actually black.
 o.window(".*", { tag = "-default-opacity", opacity = "1 1" })
-o.window("fastpotify", { workspace = "3 silent" })
+o.window("spotifast", { workspace = "3 silent" })
 
 -- Steam: workspace 4, unfocused on autostart. Omarchy floats every steam
 -- window by default (see default/hypr/apps/steam.lua) because the dialogs and

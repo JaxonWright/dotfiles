@@ -31,7 +31,7 @@
 -- Personal application bindings (restored from the pre-Quattro bindings.conf).
 -- Unbind default SUPER+SHIFT+M (was: Spotify)
 hl.unbind("SUPER + SHIFT + M")
-o.bind("SUPER + SHIFT + M", "Music", { focus = "^fastpotify$", launch = "spotifast" })
+o.bind("SUPER + SHIFT + M", "Music", { focus = "^spotifast$", launch = "spotifast" })
 -- Unbind default SUPER+SHIFT+ALT+M (was: cliamp TUI)
 hl.unbind("SUPER + SHIFT + ALT + M")
 o.bind("SUPER + SHIFT + ALT + M", "Music TUI", "omarchy-launch-or-focus-tui cliamp")
