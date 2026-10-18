@@ -1,3 +1,10 @@
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
+    <img src="assets/logo-light.svg" alt="Omarchy x Jaxon Wright" width="300">
+  </picture>
+</p>
+
 # dotfiles
 
 My dotfiles, configurations, preferred programs, and plugins for Omarchy Linux. This repository allows me to quickly turn a fresh machine into my own; just how I like it.
