@@ -56,6 +56,10 @@ echo ""
 echo "==> Installing apps..."
 install_app "Spotifast" spotifast omarchy pkg aur add spotifast-bin
 install_app "Discord" discord omarchy pkg add discord
+install_app "Strata" strata omarchy pkg add strata
+xdg-mime default io.github.lgse.Strata.desktop inode/directory
+omarchy pkg drop nautilus-python nautilus sushi
+echo "  ✓ Strata is the file manager (Nautilus removed)"
 install_app "Signal" signal-desktop omarchy pkg add signal-desktop
 
 echo "  → Applying Signal OLED black theme..."
