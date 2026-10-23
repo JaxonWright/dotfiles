@@ -1,0 +1,14 @@
+# Grok Bot ships no OLED theme and a package upgrade restores the stock dark
+# palette, so re-apply the patch after grok-bot changes. The script is
+# idempotent and refuses to write if the palette moved.
+[Trigger]
+Type = Package
+Operation = Install
+Operation = Upgrade
+Target = grok-bot
+
+[Action]
+Description = Repainting Grok Bot's dark theme black for OLED...
+When = PostTransaction
+Exec = /usr/local/bin/grok-bot-oled-patch
+Depends = python

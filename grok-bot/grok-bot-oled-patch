@@ -1,0 +1,157 @@
+#!/usr/bin/env python3
+"""Repaint Grok Bot's dark theme to true black, for OLED screens.
+
+Grok Bot has no OLED theme. Its dark palette is not in any stylesheet: the
+renderer builds every `--sand-*` and `--cursor-*` variable at runtime from a
+small table of neutral primitives, and the main process keeps its own copy of
+that table for the window background it paints before the page loads. Both
+copies live inside app.asar:
+
+  dist/renderer/assets/index.eager-common-<hash>.js   "neutral/0":`#1f1f1f`,...
+  dist/electron-main/main-core.cjs                    "neutral/0":"#1f1f1f",...
+
+The surfaces map onto those primitives as elevated=0, pane=1, chrome=2 and
+sidebar=3. Pane, chrome and sidebar become black. Elevated (#1f1f1f) is left
+alone so menus, popovers and dialogs stay visible against black, and hover and
+pressed states already mix from the light end of the scale. Only tables whose
+pane primitive is dark are touched, so the light theme is unchanged.
+
+Bundle names carry a content hash that changes every release, so every .js and
+.cjs file in the archive is scanned rather than looked up by name.
+
+Every replacement is the same length as what it replaces, so all offsets in the
+asar index stay valid and the archive needs no repacking. Each changed file's
+SHA256 integrity entry in the index is recomputed too; hex digests are fixed
+width, so the index keeps its exact size.
+
+Idempotent: re-running on an already-patched file is a no-op. That is what
+makes it safe to drive from a pacman hook after each grok-bot upgrade.
+"""
+
+import hashlib
+import json
+import os
+import re
+import struct
+import sys
+import tempfile
+from pathlib import Path
+
+ASAR = Path("/opt/Grok Bot/resources/app.asar")
+
+BLACK = b"#000000"
+SURFACES = (1, 2, 3)  # pane, chrome, sidebar; 0 is elevated and stays grey
+TABLE = re.compile(
+    rb'"neutral/0":([`"])#[0-9a-fA-F]{6}\1'
+    + b"".join(rb',"neutral/%d":\1(#[0-9a-fA-F]{6})\1' % n for n in SURFACES)
+)
+
+
+def locate(asar: Path):
+    """Return (data_base, json_offset, json_len, index) for an asar archive."""
+    with asar.open("rb") as f:
+        head = f.read(16)
+        if len(head) < 16:
+            sys.exit(f"{asar}: too short to be an asar archive")
+        _, pickle_size, _, json_len = struct.unpack("<IIII", head)
+        index = json.loads(f.read(json_len).decode("utf-8"))
+    return 8 + pickle_size, 16, json_len, index
+
+
+def scripts(node, path=""):
+    for name, value in node.get("files", {}).items():
+        cur = f"{path}/{name}"
+        if "files" in value:
+            yield from scripts(value, cur)
+        elif not value.get("unpacked") and cur.endswith((".js", ".cjs")):
+            yield cur, value
+
+
+def is_dark(hex_color: bytes):
+    r, g, b = (int(hex_color[i : i + 2], 16) for i in (1, 3, 5))
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b < 64
+
+
+def blacken(region: bytes):
+    """Return (patched, tables_found, values_changed) for one bundle."""
+    out = bytearray(region)
+    tables = changed = 0
+    for match in TABLE.finditer(region):
+        if not is_dark(match.group(2)):
+            continue
+        tables += 1
+        for group in range(2, 2 + len(SURFACES)):
+            if match.group(group).lower() != BLACK:
+                out[match.start(group) : match.end(group)] = BLACK
+                changed += 1
+    return bytes(out), tables, changed
+
+
+def integrity(data: bytes, block_size: int):
+    return {
+        "hash": hashlib.sha256(data).hexdigest(),
+        "blocks": [
+            hashlib.sha256(data[i : i + block_size]).hexdigest()
+            for i in range(0, max(len(data), 1), block_size)
+        ],
+    }
+
+
+def main():
+    global ASAR
+    if len(sys.argv) > 1:  # patch a copy instead; used to rehearse before installing
+        ASAR = Path(sys.argv[1])
+    if not ASAR.exists():
+        sys.exit(f"{ASAR}: not found (is grok-bot installed?)")
+
+    base, json_off, json_len, index = locate(ASAR)
+    raw = ASAR.read_bytes()
+    out = bytearray(raw)
+    tables = total = 0
+    report = []
+
+    for name, meta in scripts(index):
+        off, size = base + int(meta["offset"]), int(meta["size"])
+        region = raw[off : off + size]
+        if b'"neutral/0":' not in region:
+            continue
+        patched, found, changed = blacken(region)
+        tables += found
+        if changed == 0:
+            continue
+        out[off : off + size] = patched
+        if "integrity" in meta:
+            meta["integrity"].update(integrity(patched, int(meta["integrity"]["blockSize"])))
+        total += changed
+        report.append(f"{changed} in {Path(name).name}")
+
+    if tables == 0:
+        sys.exit(f"{ASAR}: no dark neutral palette found; the theme moved, refusing to patch")
+    if total == 0:
+        print("grok-bot-oled: already black, nothing to do")
+        return
+
+    header = json.dumps(index, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    if len(header) != json_len:
+        sys.exit(f"grok-bot-oled: refusing to write, asar index changed size {json_len} -> {len(header)}")
+    out[json_off : json_off + json_len] = header
+
+    # Write a whole new file and rename it over the original, so an interrupted
+    # run can never leave a half-written 50MB bundle behind.
+    stat = ASAR.stat()
+    fd, tmp = tempfile.mkstemp(dir=str(ASAR.parent), prefix=".app.asar.oled-")
+    try:
+        with os.fdopen(fd, "wb") as f:
+            f.write(out)
+        os.chmod(tmp, stat.st_mode & 0o7777)
+        os.chown(tmp, stat.st_uid, stat.st_gid)
+        os.replace(tmp, ASAR)
+    except BaseException:
+        Path(tmp).unlink(missing_ok=True)
+        raise
+
+    print(f"grok-bot-oled: blackened {total} surfaces in {tables} palettes ({', '.join(report)})")
+
+
+if __name__ == "__main__":
+    main()

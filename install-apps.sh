@@ -43,6 +43,15 @@ install_app "VS Code" code omarchy install editor vscode
 echo ""
 echo "==> Installing AI apps..."
 install_app "Grok Bot" grok-bot omarchy install and launch "Grok Bot" grok-bot grok-bot
+
+echo "  → Applying Grok Bot OLED black theme..."
+sudo install -d -m 755 /var/cache/grok-bot-oled
+sudo cp -n "/opt/Grok Bot/resources/app.asar" /var/cache/grok-bot-oled/app.asar.orig
+sudo install -m 755 -o root -g root "$REPO_DIR/grok-bot/grok-bot-oled-patch" /usr/local/bin/grok-bot-oled-patch
+sudo install -d -m 755 /etc/pacman.d/hooks
+sudo install -m 644 -o root -g root "$REPO_DIR/grok-bot/grok-bot-oled.hook" /etc/pacman.d/hooks/grok-bot-oled.hook
+sudo /usr/local/bin/grok-bot-oled-patch
+echo "  ✓ Grok Bot OLED black (pacman hook re-applies it on upgrade)"
 install_claude() {
   omarchy install ai claude && return
   # Older Omarchy releases lack the action; do what it does by hand.
