@@ -57,6 +57,7 @@ Run other scripts as you desire.
 | Package | Purpose | Notes |
 |---------|---------|-------|
 | `bash` | Bash shell init (starship, nvm) | |
+| `brave` | Brave launch flags (`~/.config/brave-flags.conf`) | Enables NVIDIA hardware video decode (HEVC, Twitch 1440p) |
 | `foot` | Foot terminal config | Delegates to Omarchy theme |
 | `ghostty` | Ghostty terminal config | Delegates to Omarchy theme |
 | `git` | Global git config (`~/.config/git/config`) | Replaces `~/.gitconfig` |
