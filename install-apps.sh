@@ -65,14 +65,27 @@ echo ""
 echo "==> Installing apps..."
 install_app "Spotifast" spotifast omarchy pkg aur add spotifast-bin
 install_app "Discord" discord omarchy pkg add discord
-install_app "Flea" flea omarchy pkg add flea
-# Sets the inode/directory default, FileManager1 D-Bus service, and Super+Shift+F
-# keys; idempotent, and the keys block already lives in hypr/bindings.lua.
-flea --default
-# Routes the portal file chooser to Flea and floats the picker window.
-flea --picker
+install_folio() {
+  if pacman -Si folio >/dev/null 2>&1; then
+    omarchy pkg add folio
+    return
+  fi
+  # Folio is only on the edge channel so far; install that one signed package without switching channels.
+  echo "  → folio not in the configured repos; installing it from the edge repo"
+  local base="https://pkgs.omarchy.org/edge/$(uname -m)" tmp file
+  tmp="$(mktemp -d)"
+  curl -fsSL "$base/omarchy.db" -o "$tmp/omarchy.db"
+  file="$(tar -xOf "$tmp/omarchy.db" --wildcards 'folio-[0-9]*/desc' | sed -n '/^%FILENAME%$/{n;p}')"
+  curl -fsSL "$base/$file" -o "$tmp/$file"
+  curl -fsSL "$base/$file.sig" -o "$tmp/$file.sig"
+  pacman-key --verify "$tmp/$file.sig" "$tmp/$file"
+  sudo pacman -U --noconfirm "$tmp/$file"
+  rm -rf "$tmp"
+}
+install_app "Folio" folio install_folio
+xdg-mime default folio.desktop inode/directory
 omarchy pkg drop nautilus-python nautilus sushi
-echo "  ✓ Flea is the file manager (Nautilus removed)"
+echo "  ✓ Folio is the file manager (Nautilus removed)"
 install_app "Signal" signal-desktop omarchy pkg add signal-desktop
 
 echo "  → Applying Signal OLED black theme..."
